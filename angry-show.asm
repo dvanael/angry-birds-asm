@@ -44,15 +44,21 @@ main:
 	
 	addi $8, $0, 1 # Condição do laço infinito
 lacoInfinito:
-	beq $8, $0, fim
+	beq $8, $0, fim	
+	lui $4, 0x1001
+	addi $4, $4, 19456 # Posição inicial do Mordecai	
+	jal piscarOlhosMordecai
 	
 	lui $4, 0x1001
-	addi $4, $4, 19456 # Posição inicial do Mordecai
-	
-	jal piscarOlhosMordecai	
+	addi $4, $4, 20940 # Posição inicial do porco
+	jal piscarOlhosPorco
 
 	j lacoInfinito
 fim:	
+	jal musicaParte1
+	jal musicaParte2	
+	jal musicaParte3
+	jal musicaParte4
 	addi $2, $0, 10
 	syscall
 
@@ -655,7 +661,7 @@ desenharPorco:
 # Usa (sem preservar): 
 #	$17: endereço local
 #	$18: cor local
-#	$19: endereço de retorno temporário
+#	$19: cópia do endereço de $31
 piscarOlhosMordecai:
 	add $17, $0, $4 # endereço local
 	add $19, $0, $31		
@@ -700,6 +706,69 @@ piscarOlhosMordecai:
 	
 	jr $19
 	
+# ===== ROTINA PARA PISCAR OS OLHOS DO PORCO =====
+# Entrada:
+#	$4: posição inicial do porco
+# Usa (sem presevar):
+#	$17: endereco local
+#	$18: cor local
+#	$19: cópia do endereço de $31 
+piscarOlhosPorco:
+	add $17, $0, $4 # Endereço local
+	add $19, $0, $31
+	
+	# == FECHA ==
+	ori $18, $0, 0x67e6
+	sll $18, $18, 8
+	ori $18, $18, 0x11 # verde claro
+	
+	# OLHO ESQUERDO
+	sw $18, 3064($17)
+	sw $18, 3068($17)
+	sw $18, 3576($17)
+	sw $18, 3580($17)
+	sw $18, 4088($17)
+	sw $18, 4092($17)
+	
+	# OLHO DIREITO
+	sw $18, 3112($17)
+	sw $18, 3108($17)
+	sw $18, 3620($17)
+	sw $18, 3624($17)
+	sw $18, 4132($17)
+	sw $18, 4136($17)
+	addi $5, $0, 10000	
+	jal gastarTempo
+	
+	# == ABRE ==
+	ori $18, $0, 0xffff
+	sll $18, $18, 8
+	ori $18, $18, 0xff # Branco
+	
+	# OLHO ESQUERDO
+	sw $18, 3064($17)
+	sw $18, 3068($17)
+	sw $18, 3580($17)
+	sw $18, 4088($17)
+	sw $18, 4092($17)
+	
+	# OLHO DIREITO
+	sw $18, 3112($17)
+	sw $18, 3108($17)
+	sw $18, 3620($17)
+	sw $18, 4132($17)
+	sw $18, 4136($17)
+	
+	ori $18, $0, 0x0000 # Preto
+	sw $18, 3576($17)
+	sw $18, 3624($17)
+	
+	addi $5, $0, 950000	
+	jal gastarTempo
+	
+	jr $19	
+
+	
 # ===== ROTINA PARA PASSAR O TEMPO =====
 # Entrada:
 #	$5: tempo de duração
@@ -713,5 +782,319 @@ forGastarTempo:
 	j forGastarTempo
 endForGastarTempo:
 	jr $31
+	
+# ===== ROTINA PARA TOCAR A MÚSICA =====
+musica:
+	jal musicaParte1
+	jal musicaParte2
+	jal musicaParte3
+	jal musicaParte4
+	jr $31
+	
+musicaParte1:
+	addi $4, $0, 67		# Nota Sol
+	addi $5, $0, 300
+    	addi $6, $0, 26		# Instrumento
+        addi $7, $0, 127	# Volume
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 300
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 69		# Nota lá
+	addi $5, $0, 300
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 300
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 71		# Nota si
+	addi $5, $0, 600
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 600
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 74		# Nota Ré
+	addi $5, $0, 600
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 600
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 74		# Nota Ré
+	addi $5, $0, 600
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 600
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 71		# Nota si
+	addi $5, $0, 600
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 600
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 72		# Nota Dó
+	addi $5, $0, 600
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 1200
+	addi $2, $0, 32
+	syscall
+	jr $31
+	
+musicaParte2:
+	addi $4, $0, 67		# Nota Sol
+	addi $5, $0, 300
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 300
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 69		# Nota lá
+	addi $5, $0, 300
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 300
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 71		# Nota si
+	addi $5, $0, 600
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 600
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 74		# Nota Ré
+	addi $5, $0, 600
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 600
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 74		# Nota Ré
+	addi $5, $0, 600
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 600
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 72		# Nota si
+	addi $5, $0, 600
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 600
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 71		# Nota Dó
+	addi $5, $0, 600
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 1200
+	addi $2, $0, 32
+	syscall
+	jr $31
+musicaParte3:
+	addi $4, $0, 67		# Nota Sol
+	addi $5, $0, 300
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 300
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 67		# Nota Sol
+	addi $5, $0, 300
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 300
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 69		# Nota lá
+	addi $5, $0, 300
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 300
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 71		# Nota Si
+	addi $5, $0, 600
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 600
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 74		# Nota Ré
+	addi $5, $0, 600
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 1200
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 74		# Nota ré
+	addi $5, $0, 300
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 300
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 72		# Nota dó
+	addi $5, $0, 300
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 300
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 71		# Nota si
+	addi $5, $0, 300
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 300
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 67		# Nota sol
+	addi $5, $0, 600
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 600
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 72		# Nota dó
+	addi $5, $0, 1200
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 1200
+	addi $2, $0, 32
+	syscall
+	jr $31
+	
+musicaParte4:
+	addi $4, $0, 71		# Nota si
+	addi $5, $0, 300
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 300
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 71		# Nota si
+	addi $5, $0, 300
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 300
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 69		# Nota lá
+	addi $5, $0, 300
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 300
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 69		# Nota lá
+	addi $5, $0, 600
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 600
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 71		# Nota si
+	addi $5, $0, 600
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 600
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 69		# Nota lá
+	addi $5, $0, 300
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 300
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 69		# Nota lá
+	addi $5, $0, 300
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 300
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 67		# Nota sol
+	addi $5, $0, 300
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 300
+	addi $2, $0, 32
+	syscall
+	
+	addi $4, $0, 67		# Nota sol
+	addi $5, $0, 1200
+	addi $2, $0, 31		
+	syscall
+	
+	addi $4, $0, 1200
+	addi $2, $0, 32
+	syscall
 
+	jr $31
 
