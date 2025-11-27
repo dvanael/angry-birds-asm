@@ -29,13 +29,29 @@
 
 .text
 main:
+	# $8: Condição do laço infinito 
+		
 	lui $4, 0x1001
 	jal desenharFundo
 	
 	lui $4, 0x1001
-	addi $4, $4, 19456 # Posição inicial do personagem
-	jal desenharMordecai
+	addi $4, $4, 20940 # Posição inicial do porco
 	jal desenharPorco
+	
+	lui $4, 0x1001
+	addi $4, $4, 19456 # Posição inicial do Mordecai
+	jal desenharMordecai
+	
+	addi $8, $0, 1 # Condição do laço infinito
+lacoInfinito:
+	beq $8, $0, fim
+	
+	lui $4, 0x1001
+	addi $4, $4, 19456 # Posição inicial do Mordecai
+	
+	jal piscarOlhosMordecai	
+
+	j lacoInfinito
 fim:	
 	addi $2, $0, 10
 	syscall
@@ -342,18 +358,16 @@ desenharMordecai:
 # Saída:                                   #
 #        void                              #
 # Usa (sem preservar):                     #  
+#	$16: verificação dos olhos fechados #
 #	$17: endereço local dos pixels     #
 #	$18: cor local                     #
 #                                          #
 # De uma linha para outra soma 512         #
 #                                          #
 ############################################
-desenharPorco:
-
-	
-	##### CONTORNO #####
+desenharPorco:	
+	##### CONTORNO DO CORPO #####
 	add $17, $0, $4 # Endereço local
-	addi $17, $17, 1152
 	ori $18, $0, 0x0000 
 	sll $18, $18, 8
 	ori $18, $18, 0x00 # Cor local: Preto
@@ -632,8 +646,72 @@ desenharPorco:
 	sw $18, 5644($17)
 	sw $18, 5648($17)
 	sw $18, 5652($17)
-	
-	
-	
 									
 	jr $31
+	
+# ===== ROTINA PARA PISCAR OS OLHOS DO MORDECAI ===== 
+# Entrada: 
+#	$4: posição do mordecai
+# Usa (sem preservar): 
+#	$17: endereço local
+#	$18: cor local
+#	$19: endereço de retorno temporário
+piscarOlhosMordecai:
+	add $17, $0, $4 # endereço local
+	add $19, $0, $31		
+	
+	# FECHA
+	ori $18, $0, 0xc1c1
+	sll $18, $18, 8
+	ori $18, $18, 0xc1 # Cor cinza escuro
+	
+	sw $18, 4132($17) # Lateral esquerda interna do olho esquerdo
+	sw $18, 4136($17)
+
+	sw $18, 4644($17)
+	sw $18, 4648($17)
+
+	sw $18, 4144($17) # Lateral interna do olho direito
+	sw $18, 4148($17)
+
+	sw $18, 4656($17) # Lateral interna do olho direito
+	sw $18, 4660($17)
+	addi $5, $0, 10000	
+	jal gastarTempo
+		
+	# ABRE
+	ori $18, $0, 0xffff
+	sll $18, $18, 8
+	ori $18, $18, 0xff # Cor Branco
+	
+	sw $18, 4132($17) # Lateral esquerda interna do olho esquerdo
+	sw $18, 4136($17)
+	sw $18, 4644($17)
+		
+	sw $18, 4144($17) # Lateral interna do olho direito
+	sw $18, 4148($17)
+	sw $18, 4656($17) # Lateral interna do olho direito
+	
+	ori $18, $0, 0x0000 # Preto	
+	sw $18, 4648($17)
+	sw $18, 4660($17)
+	addi $5, $0, 950000	
+	jal gastarTempo
+	
+	jr $19
+	
+# ===== ROTINA PARA PASSAR O TEMPO =====
+# Entrada:
+#	$5: tempo de duração
+# Usa (sem preservar):
+#	$25: tempo de duração
+gastarTempo:
+	add $25, $0, $5
+forGastarTempo:
+	beq $25, $0, endForGastarTempo
+	addi $25, $25, -1
+	j forGastarTempo
+endForGastarTempo:
+	jr $31
+
+
