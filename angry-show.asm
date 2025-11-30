@@ -28,9 +28,7 @@
 # 00b600 -> Nariz do porco 
 
 .text
-main:
-	# $8: Condição do laço infinito 
-		
+main:		
 	lui $4, 0x1001
 	jal desenharFundo
 	
@@ -42,12 +40,12 @@ main:
 	addi $4, $4, 19456 # Posição inicial do Mordecai
 	jal desenharMordecai
 	
-	addi $8, $0, 1 # Condição do laço infinito
-lacoInfinito:
-	beq $8, $0, fim	
+
+lacoInfinito:	
 	lui $4, 0x1001
 	addi $4, $4, 19456 # Posição inicial do Mordecai	
 	jal piscarOlhosMordecai
+	jal puloDoMordecai
 	
 	lui $4, 0x1001
 	addi $4, $4, 20940 # Posição inicial do porco
@@ -63,18 +61,28 @@ fim:
 	syscall
 
 ##########################################
-# ===== Rotina para desenhar fundo ===== #
-# Entradas:                              #	 				
-#	$4: endereço                     #
-# Saída: void                            #
-# Usa (sem preservar):                   #
-#	$16: alcance do laço             #
-#	$17: endereço local              #
-#	$18: cor local                   #
-# O cenário é armazenado 32768 endereços #
-# distantes dos endereços do display     #
+# ===== Rotina para desenhar fundo ===== 
+# Entradas:                              	 				
+#	$4: endereço                     
+# Saída: void                            
+# Usa (sem preservar):                   
+#	$16: alcance do laço             
+#	$17: endereço local              
+#	$18: cor local                   
+# O cenário é armazenado 32768 endereços 
+# distantes dos endereços do display     
 ##########################################
 desenharFundo:
+	add $19, $0, $31
+	jal fundo1
+	jal fundo2
+	jal fundo3
+	jal fundo4
+	jal fundo5
+	jal fundo6
+	jr $19
+
+fundo1:	# DESENHA O AZUL ESCURO
 	addi $16, $0, 2048 # i
 	add $17, $0, $4 # endereço local
 	ori $18, $0, 0x007aac # cor local
@@ -88,6 +96,9 @@ forFundo1:
 	addi $16, $16, -1 # i-1
 	j forFundo1
 endForFundo1:
+	jr $31
+	
+fundo2: # DESENHA O AZUL ESCURO 2
 	addi $16, $0, 640 # i
 	ori $18, $0, 0xa6d9 # cor local
 	sll $18, $18, 8
@@ -100,6 +111,9 @@ forFundo2:
 	addi $16, $16, -1
 	j forFundo2
 endForFundo2:
+	jr $31
+
+fundo3: # DESENHA O AZUL CLARO
 	addi $16, $0, 3584 # i
 	ori $18, $0, 0xd1ee # cor local
 	sll $18, $18, 8
@@ -112,6 +126,9 @@ forFundo3:
 	addi $16, $16, -1
 	j forFundo3
 endForFundo3:
+	jr $31
+
+fundo4: # DESENHA O VERDE
 	addi $16, $0, 256 # i
 	ori $18, $0, 0x6bbd # cor local
 	sll $18, $18, 8
@@ -124,6 +141,9 @@ forFundo4:
 	addi $16, $16, -1
 	j forFundo4
 endForFundo4:
+	jr $31
+
+fundo5: # DESENHA O VERDE ESCURO
 	addi $16, $0, 512 # i
 	ori $18, $0, 0x4c94 # cor local
 	sll $18, $18, 8
@@ -136,7 +156,10 @@ forFundo5:
 	addi $16, $16, -1
 	j forFundo5
 endForFundo5:
-	addi $16, $0, 1536 # i
+	jr $31
+
+fundo6: # DESENHA O AZUL EMBAIXO DO VERDE ESCURO
+	addi $16, $0, 1152 # i
 	ori $18, $0, 0x3e3e # cor local
 	sll $18, $18, 8
 	ori $18, $18, 0x73
@@ -148,19 +171,19 @@ forFundo6:
 	addi $16, $16, -1
 	j forFundo6
 endForFundo6:
-	jr $31 # Volta para a instrução de $31
+	jr $31
 
 ############################################
-# === Rotina para desenhar o Mordecai ===  #
-# Entradas:                                #	 				
-#	$4: endereço de início do desenho  #
-# Saída:                                   #
-#        void                              #
-# Usa (sem preservar):                     #
-#	$17: endereço local dos pixels     #
-#	$18: cor local                     #
-#                                          #
-# De uma linha para outra soma 512         #
+# === Rotina para desenhar o Mordecai ===  
+# Entradas:                                	 				
+#	$4: endereço de início do desenho  
+# Saída:                                   
+#        void                              
+# Usa (sem preservar):                     
+#	$17: endereço local dos pixels     
+#	$18: cor local                     
+#                                          
+# De uma linha para outra soma 512         
 ############################################
 desenharMordecai:
 	add $17, $0, $4 # endereço local dos pixels
@@ -358,18 +381,17 @@ desenharMordecai:
 	jr $31
 
 ############################################
-# === Rotina para desenhar o porco ===  #
-# Entradas:                                #	 				
-#	$4: endereço de início do desenho  #
-# Saída:                                   #
-#        void                              #
-# Usa (sem preservar):                     #  
-#	$16: verificação dos olhos fechados #
-#	$17: endereço local dos pixels     #
-#	$18: cor local                     #
-#                                          #
-# De uma linha para outra soma 512         #
-#                                          #
+# === Rotina para desenhar o porco ===  
+# Entradas:                                	 				
+#	$4: endereço de início do desenho  
+# Saída:                                   
+#        void                              
+# Usa (sem preservar):                       
+#	$16: verificação dos olhos fechados 
+#	$17: endereço local dos pixels     
+#	$18: cor local                     
+#                                          
+# De uma linha para outra soma 512                                                   
 ############################################
 desenharPorco:	
 	##### CONTORNO DO CORPO #####
@@ -654,7 +676,8 @@ desenharPorco:
 	sw $18, 5652($17)
 									
 	jr $31
-	
+
+###################################################	
 # ===== ROTINA PARA PISCAR OS OLHOS DO MORDECAI ===== 
 # Entrada: 
 #	$4: posição do mordecai
@@ -662,6 +685,7 @@ desenharPorco:
 #	$17: endereço local
 #	$18: cor local
 #	$19: cópia do endereço de $31
+###################################################
 piscarOlhosMordecai:
 	add $17, $0, $4 # endereço local
 	add $19, $0, $31		
@@ -682,7 +706,7 @@ piscarOlhosMordecai:
 
 	sw $18, 4656($17) # Lateral interna do olho direito
 	sw $18, 4660($17)
-	addi $5, $0, 10000	
+	addi $5, $0, 10000
 	jal gastarTempo
 		
 	# ABRE
@@ -705,7 +729,8 @@ piscarOlhosMordecai:
 	jal gastarTempo
 	
 	jr $19
-	
+
+###################################################	
 # ===== ROTINA PARA PISCAR OS OLHOS DO PORCO =====
 # Entrada:
 #	$4: posição inicial do porco
@@ -713,6 +738,7 @@ piscarOlhosMordecai:
 #	$17: endereco local
 #	$18: cor local
 #	$19: cópia do endereço de $31 
+###################################################
 piscarOlhosPorco:
 	add $17, $0, $4 # Endereço local
 	add $19, $0, $31
@@ -766,18 +792,75 @@ piscarOlhosPorco:
 	addi $5, $0, 950000	
 	jal gastarTempo
 	
-	jr $19	
+	jr $19
 
+###################################################
+# ===== ROTINA PARA PULAR UM PERSONAGEM =====
+# Entrada:
+#	$4: posicao inicial do personagem
+# Usa (sem preservar):
+#	$16: endereço dos pixels copiados do cenário
+#	$17: cópia da posição inicial
+#	$18, $20: laços
+#	$19: cópia do endereço $31
+###################################################
+puloDoMordecai:			
+	add $19, $0, $31 
+	add $17, $0, $4	
+		
+	jal desenharParteCenarioMordecai
+	addi $4, $4, -1024
+	jal desenharMordecai
 	
+	addi $5, $0, 65000
+	jal gastarTempo
+	
+	jal desenharParteCenarioMordecai
+	addi $4, $4, 1024
+	jal desenharMordecai
+												
+	jr $19
+	
+###################################################	
+# ===== ROTINA PARA RENDERIZAR CENÁRIO ATRAS DO MORDECAI =====
+# Entrada:
+#	$4: endereço
+# Usa:
+#	$17: cópia do endereço
+#	$18, $19: loop
+##############################################################
+desenharParteCenarioMordecai:
+	add $17, $0, $4			
+	addi $18, $0, 16
+forDesenharParteCenarioI:
+	beq $18, $0, endForDesenharParteCenarioI
+	addi $20, $0, 20
+forDesenharParteCenarioJ:
+	beq $20, $0, endForDesenharParteCenarioJ
+	lw $16, 32768($17)
+	sw $16, 0($17)
+	addi $17, $17, 4
+	addi $20, $20, -1 
+	j forDesenharParteCenarioJ
+endForDesenharParteCenarioJ:
+	addi $17, $17, 432
+	addi $18, $18, -1	
+	j forDesenharParteCenarioI
+endForDesenharParteCenarioI:
+	jr $31
+
+###################################################	
 # ===== ROTINA PARA PASSAR O TEMPO =====
 # Entrada:
 #	$5: tempo de duração
 # Usa (sem preservar):
 #	$25: tempo de duração
+###################################################
 gastarTempo:
 	add $25, $0, $5
 forGastarTempo:
 	beq $25, $0, endForGastarTempo
+	nop
 	addi $25, $25, -1
 	j forGastarTempo
 endForGastarTempo:
