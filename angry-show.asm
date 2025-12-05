@@ -39,13 +39,16 @@ main:
 	lui $4, 0x1001
 	addi $4, $4, 19456 # Posição inicial do Mordecai
 	jal desenharMordecai
-	
 
 lacoInfinito:	
 	lui $4, 0x1001
 	addi $4, $4, 19456 # Posição inicial do Mordecai	
 	jal piscarOlhosMordecai
 	jal puloDoMordecai
+	
+	lui $4, 0x1001
+	addi $4, $4, 18600 # Posição de referência para desenhar a seta
+	jal moverMordecai
 	
 	lui $4, 0x1001
 	addi $4, $4, 20940 # Posição inicial do porco
@@ -725,7 +728,7 @@ piscarOlhosMordecai:
 	ori $18, $0, 0x0000 # Preto	
 	sw $18, 4648($17)
 	sw $18, 4660($17)
-	addi $5, $0, 100000	
+	addi $5, $0, 600000	
 	jal gastarTempo
 	
 	jr $19
@@ -763,7 +766,7 @@ piscarOlhosPorco:
 	sw $18, 3624($17)
 	sw $18, 4132($17)
 	sw $18, 4136($17)
-	addi $5, $0, 10000	
+	addi $5, $0, 100000	
 	jal gastarTempo
 	
 	# == ABRE ==
@@ -789,19 +792,46 @@ piscarOlhosPorco:
 	sw $18, 3576($17)
 	sw $18, 3624($17)
 	
-	addi $5, $0, 950000	
+	addi $5, $0, 600000	
 	jal gastarTempo
 	
 	jr $19
 
+###################################################	
+# ===== ROTINA PARA RENDERIZAR CENARIO ATRAS DO MORDECAI =====
+# Entrada:
+#	$4: endereço
+# Usa:
+#	$17: cópia do endereço
+#	$18, $19: loop
+##############################################################
+desenharParteCenarioMordecai:
+	add $17, $0, $4			
+	addi $18, $0, 16
+forDesenharParteCenarioI:
+	beq $18, $0, endForDesenharParteCenarioI
+	addi $20, $0, 20
+forDesenharParteCenarioJ:
+	beq $20, $0, endForDesenharParteCenarioJ
+	lw $16, 32768($17)
+	sw $16, 0($17)
+	addi $17, $17, 4
+	addi $20, $20, -1 
+	j forDesenharParteCenarioJ
+endForDesenharParteCenarioJ:
+	addi $17, $17, 432
+	addi $18, $18, -1	
+	j forDesenharParteCenarioI
+endForDesenharParteCenarioI:
+	jr $31
+
 ###################################################
-# ===== ROTINA PARA PULAR UM PERSONAGEM =====
+# ===== ROTINA PARA PULAR O MORDECAI =====
 # Entrada:
 #	$4: posicao inicial do personagem
 # Usa (sem preservar):
 #	$16: endereço dos pixels copiados do cenário
 #	$17: cópia da posição inicial
-#	$18, $20: laços
 #	$19: cópia do endereço $31
 ###################################################
 puloDoMordecai:			
@@ -820,33 +850,126 @@ puloDoMordecai:
 	jal desenharMordecai
 												
 	jr $19
-	
+
 ###################################################	
-# ===== ROTINA PARA RENDERIZAR CEN�?RIO ATRAS DO MORDECAI =====
+# ===== ROTINA PARA MOVER O MORDECAI =====
 # Entrada:
-#	$4: endereço
+#	$4: sinal do pressionamento de tecla
 # Usa:
-#	$17: cópia do endereço
-#	$18, $19: loop
-##############################################################
-desenharParteCenarioMordecai:
-	add $17, $0, $4	# Posição inicial		
-	addi $18, $0, 16 # Altura
-forDesenharParteCenarioI:
-	beq $18, $0, endForDesenharParteCenarioI
-	addi $20, $0, 20 # Largura
-forDesenharParteCenarioJ:
-	beq $20, $0, endForDesenharParteCenarioJ
+#	$16: tecla pressionada
+#	$17: tecla para verificação
+#	$19: cópia de $31
+####################################################
+moverMordecai:
+	add $19, $0, $31
+	lui $18, 0xffff
+	lw $16, 0($18)
+	beq $16, $0, fimMoverMordecai # $16=0 --> nenhuma tecla pressionada
+	lw $16, 4($18) 
+	addi $17, $0, 'd'
+	beq $16, $17, setaFrente
+	addi $17, $0, 'w'
+	beq $16, $17, setaCima
+setaFrente:
+	jal apagarSeta
+	jal desenharSetaParaFrente
+	j fimMoverMordecai
+setaCima:
+	jal apagarSeta
+	jal desenharSetaParaCima
+	j fimMoverMordecai
+fimMoverMordecai:
+	jr $19
+
+###################################################	
+# ===== ROTINA PARA DESENHAR UMA SETA PARA FRENTE =====
+# Entrada:
+#	$5: posição da seta
+# Usa:
+#	$18: cor
+#	$21: cópia de $31 
+####################################################
+desenharSetaParaFrente:
+	ori $18, $0, 0x0000 # preto
+	add $17, $0, $4
+	
+	# DESENHA
+	sw $18, -1008($17)
+	sw $18, -496($17)
+	sw $18, -492($17)
+	sw $18, 0($17)
+	sw $18, 4($17)	
+	sw $18, 8($17)
+	sw $18, 12($17)
+	sw $18, 16($17)
+	sw $18, 20($17)
+	sw $18, 24($17)
+	sw $18, 528($17)
+	sw $18, 532($17)
+	sw $18, 1040($17)
+
+	jr $31
+
+###################################################	
+# ===== ROTINA PARA DESENHAR UMA SETA PARA CIMA =====
+# Entrada:
+#	$5: posição da seta
+# Usa:
+#	$18: cor
+#	$21: cópia de $31 
+####################################################
+desenharSetaParaCima:
+	ori $18, $0, 0x0000 # preto
+	add $17, $0, $4
+	
+	# DESENHA
+	sw $18, -1024($17)
+	sw $18, -516($17)
+	sw $18, -512($17)
+	sw $18, -508($17)
+	sw $18, -8($17)
+	sw $18, -4($17)
+	sw $18, 0($17)
+	sw $18, 4($17)
+	sw $18, 8($17)
+	sw $18, 512($17)
+	sw $18, 2048($17)
+	sw $18, 1024($17)
+	sw $18, 1536($17)
+	sw $18, 2048($17)
+	sw $18, 2560($17)
+	
+	jr $31
+
+###################################################	
+# ===== ROTINA PARA APAGAR UMA SETA =====
+# Entrada:
+#	$4: posição da seta
+# Usa:
+#	$16, $17: loop	
+#	$18: cor
+####################################################
+apagarSeta:
+	add $17, $0, $4
+	addi $17, $17, -1028
+	addi $18, $0, 8 # Altura
+forApagarSetaI:
+	beq $18, $0, endForApagarSetaI
+	addi $20, $0, 10 # Largura
+	
+forApagarSetaJ:
+	beq $20, $0, endForApagarSetaJ
 	lw $16, 32768($17)
 	sw $16, 0($17)
 	addi $17, $17, 4
 	addi $20, $20, -1 
-	j forDesenharParteCenarioJ
-endForDesenharParteCenarioJ:
-	addi $17, $17, 432
+	j forApagarSetaJ
+endForApagarSetaJ:
+
+	addi $17, $17, 472
 	addi $18, $18, -1	
-	j forDesenharParteCenarioI
-endForDesenharParteCenarioI:
+	j forApagarSetaI
+endForApagarSetaI:
 	jr $31
 
 ###################################################	
