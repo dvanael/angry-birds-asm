@@ -940,23 +940,15 @@ controle:
 	
 	lw $16, 4($18) 
 	addi $17, $0, 'd'
-	beq $16, $17, setaFrente
-	addi $17, $0, 'w'
-	beq $16, $17, setaCima
-setaFrente:
+	beq $16, $17, frente
+fimControle:
+	jr $19
+frente:
 	addi $5, $0, 'd'
 	lui $4, 0x1001 # posicao inicial do Mordecai
 	addi $4, $4, 11264 # posicao inicial do Mordecaii
 	jal moverMordecai
 	j fimControle
-setaCima:
-	addi $4, $4, -8
-	jal apagarSeta
-	addi $4, $4, 8
-	jal desenharSetaParaCima
-	j fimControle
-fimControle:
-	jr $19
 
 ###################################################	
 # ===== ROTINA PARA MOVER O MORDECAI =====
