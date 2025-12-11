@@ -1027,6 +1027,8 @@ fimForMoverMordecaiFrente:
 	j fimMoverMordecai
 ganhouFimJogo:
 	addi $8, $0, 1
+	addi $5, $0, 500000
+	jal gastarTempo
 	j fimJogo
 	
 # MORDECAI PARA CIMA	
@@ -1052,98 +1054,10 @@ fimForMoverMordecaiCima:
 	j fimMoverMordecai
 perdeuFimJogo:
 	addi $8, $0, 0
+	addi $5, $0, 500000
+	jal gastarTempo
 	j fimJogo
-
-###################################################	
-# ===== ROTINA PARA DESENHAR UMA SETA PARA FRENTE =====
-# Entrada:
-#	$5: posição da seta
-# Usa:
-#	$18: cor
-####################################################
-desenharSetaParaFrente:
-	ori $18, $0, 0x0000 # preto
-	add $17, $0, $4
 	
-	# DESENHA
-	sw $18, -1008($17)
-	sw $18, -496($17)
-	sw $18, -492($17)
-	sw $18, 0($17)
-	sw $18, 4($17)	
-	sw $18, 8($17)
-	sw $18, 12($17)
-	sw $18, 16($17)
-	sw $18, 20($17)
-	sw $18, 24($17)
-	sw $18, 528($17)
-	sw $18, 532($17)
-	sw $18, 1040($17)
-
-	jr $31
-
-###################################################	
-# ===== ROTINA PARA DESENHAR UMA SETA PARA CIMA =====
-# Entrada:
-#	$5: posição da seta
-# Usa:
-#	$18: cor
-####################################################
-desenharSetaParaCima:
-	ori $18, $0, 0x0000 # preto
-	add $17, $0, $4
-	
-	# DESENHA
-	sw $18, -1024($17)
-	sw $18, -516($17)
-	sw $18, -512($17)
-	sw $18, -508($17)
-	sw $18, -8($17)
-	sw $18, -4($17)
-	sw $18, 0($17)
-	sw $18, 4($17)
-	sw $18, 8($17)
-	sw $18, 512($17)
-	sw $18, 2048($17)
-	sw $18, 1024($17)
-	sw $18, 1536($17)
-	sw $18, 2048($17)
-	sw $18, 2560($17)
-	
-	jr $31
-
-###################################################	
-# ===== ROTINA PARA APAGAR UMA SETA =====
-# Entrada:
-#	$4: posicao da seta
-# Usa:
-#	$16, $17: loop	
-#	$18: cor
-####################################################
-apagarSeta:
-	add $17, $0, $4
-	addi $17, $17, -1028
-	addi $18, $0, 8 # Altura
-forApagarSetaI:
-	beq $18, $0, endForApagarSetaI
-	addi $20, $0, 10 # Largura
-	
-forApagarSetaJ:
-	beq $20, $0, endForApagarSetaJ
-	lw $16, 32768($17)
-	sw $16, 0($17)
-	addi $17, $17, 4
-	addi $20, $20, -1 
-	j forApagarSetaJ
-endForApagarSetaJ:
-
-	addi $17, $17, 472
-	addi $18, $18, -1	
-	j forApagarSetaI
-endForApagarSetaI:
-	jr $31
-	
-
 ###################################################	
 # ===== ROTINA PARA PASSAR O TEMPO =====
 # Entrada:
