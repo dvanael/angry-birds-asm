@@ -30,12 +30,36 @@ lacoInfinito:
 
 	j lacoInfinito
 fimJogo:	
+	beq $8, $0, telaPerdeuJogo
+	bne $8, $0, telaVenceuJogo
+
+encerraJogo:	
 	jal musicaParte1
 	jal musicaParte2	
 	jal musicaParte3
 	jal musicaParte4
 	addi $2, $0, 10
 	syscall
+	
+telaPerdeuJogo:
+	lui $4, 0x1001		# posi inicial
+	addi $5, $0, 256		# altura
+	addi $6, $0, 512		# largura
+	ori $7, $0, 0xff00
+	sll $7, $7, 8
+	ori $7, $7, 0x0000
+	jal desenharQuadrado
+	j encerraJogo
+
+telaVenceuJogo:
+	lui $4, 0x1001		# posi inicial
+	addi $5, $0, 256		# altura
+	addi $6, $0, 512		# largura
+	ori $7, $0, 0x00ff
+	sll $7, $7, 8
+	ori $7, $7, 0x000
+	jal desenharQuadrado
+	j encerraJogo
 
 ##########################################
 # ===== Rotina para desenhar estilingue =====                                               
@@ -218,7 +242,7 @@ desenharQuadrado:
     	add $9, $0, $5     # $9 = contador de linhas (altura)
 
 forQuadrado:
-    	beq  $9, $0, endForQuadrado	# se altura = 0 → fim
+    	beq  $9, $0, endForQuadrado	# se altura = 0 -> fim
 
     	# reset largura
     	add $10, $0, $6             	# $10 = contador de colunas (largura)
@@ -917,6 +941,7 @@ forDesenharParteCenarioJ:
 	addi $20, $20, -1 
 	j forDesenharParteCenarioJ
 endForDesenharParteCenarioJ:
+	
 	addi $17, $17, 432
 	addi $18, $18, -1	
 	j forDesenharParteCenarioI
@@ -941,10 +966,18 @@ controle:
 	lw $16, 4($18) 
 	addi $17, $0, 'd'
 	beq $16, $17, frente
+	addi $17, $0, 'w'
+	beq $16, $17, cima
 fimControle:
 	jr $19
 frente:
 	addi $5, $0, 'd'
+	lui $4, 0x1001 # posicao inicial do Mordecai
+	addi $4, $4, 11264 # posicao inicial do Mordecaii
+	jal moverMordecai
+	j fimControle
+cima:
+	addi $5, $0, 'w'
 	lui $4, 0x1001 # posicao inicial do Mordecai
 	addi $4, $4, 11264 # posicao inicial do Mordecaii
 	jal moverMordecai
@@ -963,19 +996,21 @@ frente:
 # OBS.: NÃO USAR O REGISTRADOR $19
 ####################################################
 moverMordecai:
-	add $21, $0, $31
-	add $17, $0, $4 # POSICAO MORDECAI
-	
+	add $21, $0, $31	
+	addi $16, $0, 'd' 
+	beq $5, $16, moverMordecaiFrente # PODE SUBSTITUIR O VALOR DE $5 DEPOIS DE ENTRAR NUMA FUNCAO
+	addi $16, $0, 'w'
+	beq $5, $16, moverMordecaiCima
+fimMoverMordecai:
+	jr $21
+# MORDECAI PARA FRENTE	
+moverMordecaiFrente:
 	ori $23, $0, 0x72ff 
 	sll $23, $23, 8
 	ori $23, $23, 0x38 # Cor local: Verde
-	
-	addi $16, $0, 'd' 
-	beq $5, $16, moverMordecaiFrente # PODE SUBSTITUIR O VALOR DE $5 DEPOIS DE ENTRAR NUMA FUNCAO
-moverMordecaiFrente:
-	addi $24, $0, 100 # 93 é para chegar no um pixel antes do mordecai encostar no porco
+	addi $24, $0, 94 # 93 é para chegar no um pixel antes do mordecai encostar no porco
 forMoverMordecaiFrente:	
-	beq $24, $0, fimForMoverMordecai
+	beq $24, $0, fimForMoverMordecaiFrente
 	addi $5, $0, 16 # Altura
 	addi $6, $0, 20 # Largura
 	jal desenharParteCenarioMordecai	
@@ -983,17 +1018,41 @@ forMoverMordecaiFrente:
 	addi $4, $4, 4
 	jal desenharMordecai
 	
-	lw $16, 5716($17)
+	lw $16, 5716($4)
 	beq $23, $16, ganhouFimJogo
 
 	addi $24, $24, -1
 	j forMoverMordecaiFrente
-fimForMoverMordecai:	
+fimForMoverMordecaiFrente:	
 	j fimMoverMordecai
 ganhouFimJogo:
+	addi $8, $0, 1
 	j fimJogo
-fimMoverMordecai:
-	jr $21
+	
+# MORDECAI PARA CIMA	
+moverMordecaiCima:
+	lui $23, 0x1001
+	addi $24, $0, 38 # 37 é para chegar no um pixel antes do mordecai sair da tela para cima
+forMoverMordecaiCima:	
+	beq $24, $0, fimForMoverMordecaiCima
+	addi $5, $0, 16 # Altura
+	addi $6, $0, 20 # Largura
+	jal desenharParteCenarioMordecai	
+	
+	addi $4, $4, -512
+	jal desenharMordecai
+	
+	addi $17, $4, 7680
+	slt $18, $17, $23
+	bne $18, $0, perdeuFimJogo
+
+	addi $24, $24, -1
+	j forMoverMordecaiCima	
+fimForMoverMordecaiCima:	
+	j fimMoverMordecai
+perdeuFimJogo:
+	addi $8, $0, 0
+	j fimJogo
 
 ###################################################	
 # ===== ROTINA PARA DESENHAR UMA SETA PARA FRENTE =====
