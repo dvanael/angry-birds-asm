@@ -2,9 +2,9 @@
 main:		
 	lui $4, 0x1001
 	jal desenharFundo
-
-	jal desenharBaseMordecai
+	
 	jal desenharBasePorco
+	jal desenharBaseMordecai
 	
 	lui $4, 0x1001
 	addi $4, $4, 12748 # posicao inicial do porco
@@ -13,12 +13,14 @@ main:
 	lui $4, 0x1001
 	addi $4, $4, 11264 # posicao inicial do Mordecai
 	jal desenharMordecai
+	jal desenharBaseMordecai2
 
 lacoInfinito:		
 	lui $4, 0x1001
 	addi $4, $4, 11264 # posicao inicial do Mordecaii	
 	jal piscarOlhosMordecai
 	jal puloDoMordecai
+	jal desenharBaseMordecai2
 	
 	lui $4, 0x1001
 	addi $4, $4, 18600 # posicao de referencia para desenhar a seta
@@ -68,7 +70,7 @@ telaVenceuJogo:
 #	$17: endereço local              
 #	$18: cor local                        
 ##########################################
-desenharBaseMordecai:
+desenharBasePorco:
 	add $19, $0, $31
 	
 	lui $4, 0x1001
@@ -119,7 +121,7 @@ desenharBaseMordecai:
 #	$17: endereço local              
 #	$18: cor local                        
 ##########################################
-desenharBasePorco:
+desenharBaseMordecai:
 	add $19, $0, $31
 	
 	lui $4, 0x1001
@@ -139,18 +141,40 @@ desenharBasePorco:
 	addi $4, $4, 8192
 	addi $4, $4, 2048
 	addi $4, $4, 1024
+	addi $4, $4, 20
 	addi $5, $0, 15		# altura
 	addi $6, $0, 4		# largura
 	ori $7, $0, 0x8951
 	sll $7, $7, 8
 	ori $7, $7, 0x29
 	jal desenharQuadrado
-
+	
 	lui $4, 0x1001
-	addi $4, $4, 8240	# posi inicial
-	addi $4, $4, 8192
+	addi $4, $4, 8192	# posi inicial
 	addi $4, $4, 2048
-	addi $4, $4, 1024
+	addi $4, $4, 1536
+	addi $4, $4, 44
+	addi $5, $0, 15		# altura
+	addi $6, $0, 4		# largura
+	ori $7, $0, 0x8951
+	sll $7, $7, 8
+	ori $7, $7, 0x29
+	jal desenharQuadrado
+	
+	jr $19
+###################################################
+# ===== Rotina para desenhar parte estilingue =====                                               
+# Usa (sem preservar):                   
+#	$16: alcance do laço             
+#	$17: endereço local              
+#	$18: cor local                        
+###################################################
+desenharBaseMordecai2:
+	add $19, $0, $31
+	lui $4, 0x1001
+	addi $4, $4, 8192	# posi inicial
+	addi $4, $4, 2048
+	addi $4, $4, 1536
 	addi $5, $0, 15		# altura
 	addi $6, $0, 4		# largura
 	ori $7, $0, 0x8951
@@ -905,7 +929,7 @@ puloDoMordecai:
 	addi $4, $4, -1024
 	jal desenharMordecai
 	
-	addi $5, $0, 65000
+	addi $5, $0, 45000
 	jal gastarTempo
 	
 	addi $5, $0, 16
@@ -967,6 +991,8 @@ controle:
 	addi $17, $0, 'd'
 	beq $16, $17, frente
 	addi $17, $0, 'w'
+	beq $16, $17, cima
+	addi $17, $0, 'e'
 	beq $16, $17, cima
 fimControle:
 	jr $19
