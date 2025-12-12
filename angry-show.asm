@@ -1089,9 +1089,9 @@ moverMordecaiDiagonal:
 	ori $23, $0, 0x72ff 
 	sll $23, $23, 8
 	ori $23, $23, 0x38 # Cor local: Verde
-	addi $24, $0, 94 # 93 é para chegar no um pixel antes do mordecai encostar no porco
-forMoverMordecaiDiagonal:	
-	beq $24, $0, fimForMoverMordecaiDiagonal
+	addi $24, $0, 17 # 17 é o ponto para fazer o declínio
+forMoverMordecaiDiagonalCima:	
+	beq $24, $0, fimForMoverMordecaiDiagonalCima
 	addi $5, $0, 16 # Altura
 	addi $6, $0, 20 # Largura
 	jal desenharParteCenarioMordecai	
@@ -1103,8 +1103,25 @@ forMoverMordecaiDiagonal:
 	beq $23, $16, ganhouFimJogo
 
 	addi $24, $24, -1
-	j forMoverMordecaiDiagonal
-fimForMoverMordecaiDiagonal:	
+	j forMoverMordecaiDiagonalCima
+fimForMoverMordecaiDiagonalCima:
+
+	addi $24, $0, 17
+forMoverMordecaiDiagonalBaixo:	
+	beq $24, $0, fimForMoverMordecaiDiagonalBaixo
+	addi $5, $0, 16 # Altura
+	addi $6, $0, 20 # Largura
+	jal desenharParteCenarioMordecai	
+	
+	addi $4, $4, 524
+	jal desenharMordecai
+	
+	lw $16, 5716($4)
+	beq $23, $16, ganhouFimJogo
+
+	addi $24, $24, -1
+	j forMoverMordecaiDiagonalBaixo
+fimForMoverMordecaiDiagonalBaixo:						
 	j fimMoverMordecai
 
 ganhouFimJogo:
