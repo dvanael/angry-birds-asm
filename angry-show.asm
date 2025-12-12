@@ -993,7 +993,7 @@ controle:
 	addi $17, $0, 'w'
 	beq $16, $17, cima
 	addi $17, $0, 'e'
-	beq $16, $17, cima
+	beq $16, $17, diagonal
 fimControle:
 	jr $19
 frente:
@@ -1004,6 +1004,12 @@ frente:
 	j fimControle
 cima:
 	addi $5, $0, 'w'
+	lui $4, 0x1001 # posicao inicial do Mordecai
+	addi $4, $4, 11264 # posicao inicial do Mordecaii
+	jal moverMordecai
+	j fimControle
+diagonal:
+	addi $5, $0, 'e'
 	lui $4, 0x1001 # posicao inicial do Mordecai
 	addi $4, $4, 11264 # posicao inicial do Mordecaii
 	jal moverMordecai
@@ -1027,8 +1033,11 @@ moverMordecai:
 	beq $5, $16, moverMordecaiFrente # PODE SUBSTITUIR O VALOR DE $5 DEPOIS DE ENTRAR NUMA FUNCAO
 	addi $16, $0, 'w'
 	beq $5, $16, moverMordecaiCima
+	addi $16, $0, 'e'
+	beq $5, $16, moverMordecaiDiagonal
 fimMoverMordecai:
 	jr $21
+	
 # MORDECAI PARA FRENTE	
 moverMordecaiFrente:
 	ori $23, $0, 0x72ff 
@@ -1051,11 +1060,6 @@ forMoverMordecaiFrente:
 	j forMoverMordecaiFrente
 fimForMoverMordecaiFrente:	
 	j fimMoverMordecai
-ganhouFimJogo:
-	addi $8, $0, 1
-	addi $5, $0, 500000
-	jal gastarTempo
-	j fimJogo
 	
 # MORDECAI PARA CIMA	
 moverMordecaiCima:
@@ -1078,6 +1082,37 @@ forMoverMordecaiCima:
 	j forMoverMordecaiCima	
 fimForMoverMordecaiCima:	
 	j fimMoverMordecai
+
+
+# MORDECAI PARA DIAGONAL			
+moverMordecaiDiagonal:
+	ori $23, $0, 0x72ff 
+	sll $23, $23, 8
+	ori $23, $23, 0x38 # Cor local: Verde
+	addi $24, $0, 94 # 93 é para chegar no um pixel antes do mordecai encostar no porco
+forMoverMordecaiDiagonal:	
+	beq $24, $0, fimForMoverMordecaiDiagonal
+	addi $5, $0, 16 # Altura
+	addi $6, $0, 20 # Largura
+	jal desenharParteCenarioMordecai	
+	
+	addi $4, $4, -500
+	jal desenharMordecai
+	
+	lw $16, 5716($4)
+	beq $23, $16, ganhouFimJogo
+
+	addi $24, $24, -1
+	j forMoverMordecaiDiagonal
+fimForMoverMordecaiDiagonal:	
+	j fimMoverMordecai
+
+ganhouFimJogo:
+	addi $8, $0, 1
+	addi $5, $0, 500000
+	jal gastarTempo
+	j fimJogo
+	
 perdeuFimJogo:
 	addi $8, $0, 0
 	addi $5, $0, 500000
