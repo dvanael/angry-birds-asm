@@ -1,6 +1,6 @@
 .text
 main:	
-	addi $12, $0, 0	  # NÃO USE ESSE REGISTRADOR NO CÓDIGO
+	addi $12, $0, 0	  	# NÃO USE ESSE REGISTRADOR NO CÓDIGO
 	
 	lui $4, 0x1001
 	jal desenharFundo
@@ -9,7 +9,6 @@ main:
 	addi $4, $4, 96
 	addi $4, $4, 8192
 	jal splashArt
-	
 	lui $4, 0x1001		# posi inicial
 	addi $4, $4, 96
 	addi $4, $4, 8192
@@ -19,6 +18,9 @@ main:
 	addi $4, $4, 160
 	jal WendN
 	
+	jal mainThemePt1	# toca musica pricipal
+	jal mainThemePt2
+
 	addi $5, $0, 1000000
 	jal gastarTempo
 	
@@ -46,6 +48,9 @@ lacoInfinito:
 	addi $4, $4, 11264 # posicao inicial do Mordecaii	
 	jal piscarOlhosMordecai
 	jal puloDoMordecai
+
+	jal birdCry		# dá pra melhorar quando ele é tocado
+		
 	jal desenharBaseMordecai2
 	
 	lui $4, 0x1001
@@ -57,11 +62,7 @@ fimJogo:
 	beq $8, $0, telaPerdeuJogo
 	bne $8, $0, telaVenceuJogo
 
-encerraJogo:	
-	jal musicaParte1
-	jal musicaParte2	
-	jal musicaParte3
-	jal musicaParte4
+encerraJogo:
 	addi $2, $0, 10
 	syscall
 			
@@ -71,6 +72,7 @@ telaPerdeuJogo:
 	addi $4, $4, 8192
 	addi $4, $4, 4096
 	jal loseTitle
+	jal gameOverMusic
 	j encerraJogo
 
 telaVenceuJogo:
@@ -81,6 +83,11 @@ telaVenceuJogo:
 	sll $7, $7, 8
 	ori $7, $7, 0x000
 	jal desenharQuadrado
+		
+	jal musicaParte1
+	jal musicaParte2	
+	jal musicaParte3
+	jal musicaParte4
 	j encerraJogo
 
 ############################################
@@ -2494,7 +2501,7 @@ piscarOlhosMordecai:
 	sw $18, 4660($17)
 	addi $5, $0, 50000
 	jal gastarTempo
-		
+	
 	# ABRE
 	ori $18, $0, 0xffff
 	sll $18, $18, 8
@@ -3166,3 +3173,425 @@ musicaParte4:
 
 	jr $31
 
+
+mainThemePt1:
+	# salva endereço de retorno
+	addi $29, $29, -4
+	sw   $31, 0($29)
+	# Configuração padrão
+	addi $6, $0, 0       # Instrumento (0 = Piano)
+	addi $7, $0, 120     # Volume
+
+	# E4
+	addi $4, $0, 64
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+
+	# F#4
+	addi $4, $0, 66
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+
+	# G4
+	addi $4, $0, 67
+	addi $5, $0, 300
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 300
+	jal pausaMusica
+
+	# E4
+	addi $4, $0, 64
+	addi $5, $0, 300
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 300
+	jal pausaMusica
+
+	# B4
+	addi $4, $0, 71
+	addi $5, $0, 300
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 300
+	jal pausaMusica
+
+	# E4
+	addi $4, $0, 64
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+
+	# F#4
+	addi $4, $0, 66
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+
+	# G4
+	addi $4, $0, 67
+	addi $5, $0, 300
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 300
+	jal pausaMusica
+
+	# B4
+	addi $4, $0, 71
+	addi $5, $0, 300
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 300
+	jal pausaMusica
+	
+	# B4
+	addi $4, $0, 71
+	addi $5, $0, 600
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 600
+	jal pausaMusica
+
+	# B4
+	addi $4, $0, 71
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+
+	# C5
+	addi $4, $0, 72
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+
+	# B4
+	addi $4, $0, 71
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+
+	# A4
+	addi $4, $0, 69
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+
+	# G4
+	addi $4, $0, 67
+	addi $5, $0, 300
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 300
+	jal pausaMusica
+
+	addi $4, $0, 67
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+
+	# F#4
+	addi $4, $0, 66
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+
+	# E4 (final)
+	addi $4, $0, 64
+	addi $5, $0, 1000
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 1000
+	jal pausaMusica
+
+	lw $31, 0($29)
+	addi $29, $29, 4
+	jr $31
+
+mainThemePt2:
+	# salva endereço de retorno
+	addi $29, $29, -4
+	sw   $31, 0($29)
+	# Configuração padrão
+	addi $6, $0, 0       # Instrumento (0 = Piano)
+	addi $7, $0, 120     # Volume
+  # E4
+	addi $4, $0, 64
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+	# F#4
+	addi $4, $0, 66
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+	# G4
+	addi $4, $0, 67
+	addi $5, $0, 300
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 300
+	jal pausaMusica
+	# E4
+	addi $4, $0, 64
+	addi $5, $0, 400
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 600
+	jal pausaMusica
+	# G4
+	addi $4, $0, 67
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+	# A4
+	addi $4, $0, 69
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+	# B4
+	addi $4, $0, 71
+	addi $5, $0, 300
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 300
+	jal pausaMusica
+	# G4
+	addi $4, $0, 67
+	addi $5, $0, 400
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 600
+	jal pausaMusica
+	# B4
+	addi $4, $0, 71
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+	# C#5
+	addi $4, $0, 73
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+	# D5
+	addi $4, $0, 74
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+	# C#5
+	addi $4, $0, 73
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+	# D5
+	addi $4, $0, 74
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+	# C#5
+	addi $4, $0, 73
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+	# D5
+	addi $4, $0, 74
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+	# E5
+	addi $4, $0, 76
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+	# D5
+	addi $4, $0, 74
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+	# C#5
+	addi $4, $0, 73
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+	# E4
+	addi $4, $0, 71
+	addi $5, $0, 300
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 300
+	jal pausaMusica
+	# E4
+	addi $4, $0, 71
+	addi $5, $0, 400
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 600
+	jal pausaMusica
+
+	lw   $31, 0($29)
+	addi $29, $29, 4
+	jr $31
+
+
+gameOverMusic:
+	# salva endereço de retorno
+	addi $29, $29, -4
+	sw   $31, 0($29)
+	
+	# D minor chord
+	addi $4, $0, 38		# D3
+	addi $5, $0, 700	# Tempo (milisegundos)
+	addi $6, $0, 33		# Bass
+	addi $7, $0, 120	# Volume
+	addi $2, $0, 31
+	syscall
+	
+	addi $4, $0, 41		# F3
+	addi $2, $0, 31
+	syscall
+
+	addi $4, $0, 45		# A3
+	addi $2, $0, 31
+	syscall
+
+	addi $4, $0, 700
+	jal pausaMusica
+
+	# C#5 chord
+	addi $4, $0, 37		# C#3
+	addi $2, $0, 31
+	syscall
+
+	addi $4, $0, 41		# F
+	addi $2, $0, 31
+	syscall
+
+	addi $4, $0, 500
+	jal pausaMusica
+
+	# C4 chord
+	addi $4, $0, 36		# C
+	addi $5, $0, 1000	# Tempo (milisegundos)
+	addi $2, $0, 31
+	syscall
+
+	addi $4, $0, 38		# E
+	addi $2, $0, 31
+	syscall
+
+	addi $4, $0, 1000
+	jal pausaMusica
+	
+	lw   $31, 0($29)
+	addi $29, $29, 4
+	jr $31
+
+
+birdCry:
+	# salva endereço de retorno
+	addi $29, $29, -4
+	sw   $31, 0($29)
+
+	addi $6, $0, 30		# Guitar
+	addi $7, $0, 60	# Volume
+	# (C#5 C#5)
+	addi $4, $0, 73
+	addi $5, $0, 50
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 73
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 50
+	jal pausaMusica
+
+	# D#5
+	addi $4, $0, 75
+	addi $5, $0, 50
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 50
+	jal pausaMusica
+
+	# (F#5 D#5)
+	addi $4, $0, 78
+	addi $5, $0, 70
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 75
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 7
+	jal pausaMusica
+
+	#
+	addi $4, $0, 36
+	addi $5, $0, 150
+	addi $2, $0, 31
+	syscall
+	addi $4, $0, 150
+	jal pausaMusica
+
+	lw   $31, 0($29)
+	addi $29, $29, 4
+	jr $31
+
+
+# -----------------------------
+# Rotina de pausa
+# Entrada:
+#   $4 = tempo em ms
+# -----------------------------
+pausaMusica:
+	addi $2, $0, 32
+	syscall
+	jr $31
