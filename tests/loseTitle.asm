@@ -2,10 +2,6 @@
 main:
 
 	lui $4, 0x1001		# posi inicial
-	addi $5, $0, 256		# altura
-	addi $6, $0, 512		# largura
-	li $7, 0x99f0ff
-	jal desenharQuadrado
 	jal loseTitle
 	j end
 
